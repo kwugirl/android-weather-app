@@ -70,13 +70,21 @@ public class CurrentWeather {
     public double getTemperature() {
         return mTemperature;
     }
-
+    public String getFormattedTemperature() {
+        return "" + ((int) mTemperature) + "\u00B0";
+    }
     public double getHumidity() {
         return mHumidity;
+    }
+    public String getFormattedHumidity() {
+        return "" + (int) (mHumidity * 100) + "%";
     }
 
     public double getPrecipChance() {
         return mPrecipChance;
+    }
+    public String getFormattedPrecipChance() {
+        return "" + (int) (mPrecipChance * 100) + "%";
     }
 
     public String getSummary() {
