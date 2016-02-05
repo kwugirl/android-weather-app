@@ -34,7 +34,7 @@
         android:text="0"/>
 
     <TextView
-        android:id="@+id/precip_prob"
+        android:id="@+id/precip_chance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0"/>

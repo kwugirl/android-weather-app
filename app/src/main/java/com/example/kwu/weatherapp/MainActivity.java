@@ -3,8 +3,11 @@ package com.example.kwu.weatherapp;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -23,10 +26,27 @@ public class MainActivity extends AppCompatActivity {
     private double latitude = 45.5200;
     private double longitude = -122.6819;
 
+    private ImageView mIconImageView;
+
+    private TextView mTemperatureTextView;
+
+    private TextView mHumidityTextView;
+
+    private TextView mPrecipitationTextView;
+
+    private TextView mSummaryTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mIconImageView = (ImageView) findViewById(R.id.icon);
+        mTemperatureTextView = (TextView) findViewById(R.id.temperature);
+//        mLocationTextView = (TextView) findViewById(R.id.location);
+        mHumidityTextView = (TextView) findViewById(R.id.humidity);
+        mPrecipitationTextView = (TextView) findViewById(R.id.precip_chance);
+        mSummaryTextView = (TextView) findViewById(R.id.summary);
 
         String forecastURL = String.format(URL, API_KEY, latitude, longitude);
 
@@ -42,8 +62,34 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                String body = response.body().string();
+
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject json = new JSONObject(body);
+                        final CurrentWeather currentWeather = new CurrentWeather(json);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                populateViews(currentWeather);
+                            }
+                        });
+
+                    } catch (JSONException e) {
+                        Log.e(TAG, "error parsing weather data", e);
+                    }
+                }
                 Log.d(TAG, "onResponse: " + response.body().string());
             }
         });
+    }
+
+    public void populateViews(CurrentWeather currentWeather) {
+        mIconImageView.setImageResource(currentWeather.getIconResId());
+        mTemperatureTextView.setText("" + currentWeather.getmTemperature());
+        mHumidityTextView.setText(""+currentWeather.getmHumidity());
+        mPrecipitationTextView.setText(""+currentWeather.getmPrecipChance());
+        mSummaryTextView.setText(""+currentWeather.getmSummary());
     }
 }
